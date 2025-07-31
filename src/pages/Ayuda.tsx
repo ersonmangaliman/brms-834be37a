@@ -5,9 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Gift, Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Ayuda = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
+
+  const handleNewAyuda = () => {
+    toast({
+      title: "New Ayuda Record",
+      description: "Ayuda registration form would open here",
+    });
+  };
 
   // Mock ayuda data
   const ayudaRecords = [
@@ -49,7 +58,7 @@ const Ayuda = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Ayuda Distribution</h1>
-        <Button>
+        <Button onClick={handleNewAyuda}>
           <Plus className="h-4 w-4 mr-2" />
           New Ayuda Record
         </Button>

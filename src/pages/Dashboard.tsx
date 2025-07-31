@@ -1,8 +1,36 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, UserPlus, FileText, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleAddResident = () => {
+    navigate("/residents");
+    toast({
+      title: "Add New Resident",
+      description: "Redirecting to residents page...",
+    });
+  };
+
+  const handleRegisterAyuda = () => {
+    navigate("/ayuda");
+    toast({
+      title: "Register Ayuda",
+      description: "Redirecting to ayuda management...",
+    });
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Generate Report",
+      description: "Report generation feature coming soon!",
+    });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -64,15 +92,15 @@ const Dashboard = () => {
           <CardDescription>Common tasks and shortcuts</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button className="h-20 flex-col space-y-2">
+          <Button className="h-20 flex-col space-y-2" onClick={handleAddResident}>
             <UserPlus className="h-6 w-6" />
             <span>Add New Resident</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col space-y-2">
+          <Button variant="outline" className="h-20 flex-col space-y-2" onClick={handleRegisterAyuda}>
             <FileText className="h-6 w-6" />
             <span>Register Ayuda</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col space-y-2">
+          <Button variant="outline" className="h-20 flex-col space-y-2" onClick={handleGenerateReport}>
             <BarChart3 className="h-6 w-6" />
             <span>Generate Report</span>
           </Button>

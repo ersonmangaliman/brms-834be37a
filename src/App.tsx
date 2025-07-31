@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Residents from "./pages/Residents";
 import Ayuda from "./pages/Ayuda";
+import Reports from "./pages/Reports";
 import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/residents" element={<Layout><Residents /></Layout>} />
           <Route path="/ayuda" element={<Layout><Ayuda /></Layout>} />
+          <Route path="/reports" element={<Layout><Reports /></Layout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -4,17 +4,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock login - in real app, this would authenticate with backend
     if (username && password) {
-      // Redirect to dashboard (mock)
-      window.location.href = "/dashboard";
+      if (username === "admin" && password === "admin") {
+        toast({
+          title: "Login successful",
+          description: "Welcome to BRMS Dashboard",
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid username or password",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Login failed", 
+        description: "Please enter both username and password",
+        variant: "destructive",
+      });
     }
   };
 

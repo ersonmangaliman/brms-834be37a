@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Home, Users, Gift, FileText, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -42,12 +45,13 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex-1 space-y-2 p-4">
               {navigation.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.href;
                 return (
                   <Button
                     key={item.name}
-                    variant="ghost"
+                    variant={isActive ? "default" : "ghost"}
                     className={`w-full justify-start ${!sidebarOpen && 'px-2'}`}
-                    onClick={() => window.location.href = item.href}
+                    onClick={() => navigate(item.href)}
                   >
                     <Icon className="h-4 w-4" />
                     {sidebarOpen && <span className="ml-2">{item.name}</span>}
@@ -61,7 +65,7 @@ const Layout = ({ children }: LayoutProps) => {
               <Button
                 variant="ghost"
                 className={`w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 ${!sidebarOpen && 'px-2'}`}
-                onClick={() => window.location.href = "/login"}
+                onClick={() => navigate("/login")}
               >
                 <LogOut className="h-4 w-4" />
                 {sidebarOpen && <span className="ml-2">Logout</span>}

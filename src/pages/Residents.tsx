@@ -5,9 +5,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Residents = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
+
+  const handleAddResident = () => {
+    toast({
+      title: "Add New Resident",
+      description: "Add resident form would open here",
+    });
+  };
+
+  const handleEditResident = (residentName: string) => {
+    toast({
+      title: "Edit Resident",
+      description: `Editing ${residentName}`,
+    });
+  };
+
+  const handleDeleteResident = (residentName: string) => {
+    toast({
+      title: "Delete Resident",
+      description: `Confirm deletion of ${residentName}?`,
+      variant: "destructive",
+    });
+  };
 
   // Mock resident data
   const residents = [
@@ -49,7 +73,7 @@ const Residents = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Residents Management</h1>
-        <Button>
+        <Button onClick={handleAddResident}>
           <Plus className="h-4 w-4 mr-2" />
           Add New Resident
         </Button>
@@ -106,10 +130,18 @@ const Residents = () => {
                   <TableCell>{resident.dateRegistered}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditResident(resident.name)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteResident(resident.name)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
