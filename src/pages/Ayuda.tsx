@@ -4,22 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Search, Plus, Gift, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Ayuda = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
-
-  const handleNewAyuda = () => {
-    toast({
-      title: "New Ayuda Record",
-      description: "Ayuda registration form would open here",
-    });
-  };
-
-  // Mock ayuda data
-  const ayudaRecords = [
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    recipient: "",
+    type: "",
+    amount: "",
+    status: "Pending",
+    notes: "",
+  });
+  
+  // Mock ayuda data - using state to allow adding new records
+  const [ayudaRecords, setAyudaRecords] = useState([
     {
       id: 1,
       recipient: "Juan Dela Cruz",
@@ -47,7 +51,47 @@ const Ayuda = () => {
       status: "Pending",
       notes: "School supplies assistance"
     }
-  ];
+  ]);
+  
+  const { toast } = useToast();
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmitAyuda = () => {
+    if (!formData.recipient || !formData.type || !formData.amount) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create new ayuda record
+    const newRecord = {
+      id: ayudaRecords.length + 1,
+      recipient: formData.recipient,
+      type: formData.type,
+      amount: parseInt(formData.amount),
+      dateDistributed: new Date().toISOString().split('T')[0],
+      status: formData.status,
+      notes: formData.notes
+    };
+
+    // Add to records list
+    setAyudaRecords(prev => [newRecord, ...prev]);
+
+    toast({
+      title: "Ayuda Record Added",
+      description: `New ${formData.type} record for ${formData.recipient} has been created`,
+    });
+
+    // Reset form and close dialog
+    setFormData({ recipient: "", type: "", amount: "", status: "Pending", notes: "" });
+    setIsDialogOpen(false);
+  };
 
   const filteredRecords = ayudaRecords.filter(record =>
     record.recipient.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,10 +102,97 @@ const Ayuda = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Ayuda Distribution</h1>
-        <Button onClick={handleNewAyuda}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Ayuda Record
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Ayuda Record
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Ayuda Record</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="recipient" className="text-right">
+                  Recipient
+                </Label>
+                <Input
+                  id="recipient"
+                  value={formData.recipient}
+                  onChange={(e) => handleInputChange("recipient", e.target.value)}
+                  className="col-span-3"
+                  placeholder="Enter recipient name"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="type" className="text-right">
+                  Type
+                </Label>
+                <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select ayuda type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Food Package">Food Package</SelectItem>
+                    <SelectItem value="Medical Assistance">Medical Assistance</SelectItem>
+                    <SelectItem value="Education Allowance">Education Allowance</SelectItem>
+                    <SelectItem value="Emergency Relief">Emergency Relief</SelectItem>
+                    <SelectItem value="Senior Citizen Aid">Senior Citizen Aid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="amount" className="text-right">
+                  Amount
+                </Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  value={formData.amount}
+                  onChange={(e) => handleInputChange("amount", e.target.value)}
+                  className="col-span-3"
+                  placeholder="Enter amount"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+                <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Distributed">Distributed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="notes" className="text-right">
+                  Notes
+                </Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => handleInputChange("notes", e.target.value)}
+                  className="col-span-3"
+                  placeholder="Additional notes (optional)"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitAyuda}>
+                Add Record
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Summary Cards */}

@@ -20,49 +20,9 @@ const Residents = () => {
     phone: "",
     status: "Active",
   });
-  const { toast } = useToast();
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmitResident = () => {
-    if (!formData.name || !formData.age || !formData.address || !formData.phone) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Resident Added Successfully",
-      description: `${formData.name} has been registered as a new resident`,
-    });
-
-    // Reset form and close dialog
-    setFormData({ name: "", age: "", address: "", phone: "", status: "Active" });
-    setIsDialogOpen(false);
-  };
-
-  const handleEditResident = (residentName: string) => {
-    toast({
-      title: "Edit Resident",
-      description: `Editing ${residentName}`,
-    });
-  };
-
-  const handleDeleteResident = (residentName: string) => {
-    toast({
-      title: "Delete Resident",
-      description: `Confirm deletion of ${residentName}?`,
-      variant: "destructive",
-    });
-  };
-
-  // Mock resident data
-  const residents = [
+  
+  // Mock resident data - using state to allow adding new residents
+  const [residents, setResidents] = useState([
     {
       id: 1,
       name: "Juan Dela Cruz",
@@ -90,7 +50,62 @@ const Residents = () => {
       status: "Inactive",
       dateRegistered: "2023-12-10"
     }
-  ];
+  ]);
+  
+  const { toast } = useToast();
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmitResident = () => {
+    if (!formData.name || !formData.age || !formData.address || !formData.phone) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create new resident object
+    const newResident = {
+      id: residents.length + 1,
+      name: formData.name,
+      age: parseInt(formData.age),
+      address: formData.address,
+      phone: formData.phone,
+      status: formData.status,
+      dateRegistered: new Date().toISOString().split('T')[0]
+    };
+
+    // Add to residents list
+    setResidents(prev => [newResident, ...prev]);
+
+    toast({
+      title: "Resident Added Successfully",
+      description: `${formData.name} has been registered as a new resident`,
+    });
+
+    // Reset form and close dialog
+    setFormData({ name: "", age: "", address: "", phone: "", status: "Active" });
+    setIsDialogOpen(false);
+  };
+
+  const handleEditResident = (residentName: string) => {
+    toast({
+      title: "Edit Resident",
+      description: `Editing ${residentName}`,
+    });
+  };
+
+  const handleDeleteResident = (residentName: string) => {
+    toast({
+      title: "Delete Resident",
+      description: `Confirm deletion of ${residentName}?`,
+      variant: "destructive",
+    });
+  };
 
   const filteredResidents = residents.filter(resident =>
     resident.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
