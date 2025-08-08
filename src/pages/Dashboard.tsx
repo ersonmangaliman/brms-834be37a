@@ -25,9 +25,10 @@ const Dashboard = () => {
   };
 
   const handleGenerateReport = () => {
+    navigate("/reports");
     toast({
       title: "Generate Report",
-      description: "Report generation feature coming soon!",
+      description: "Redirecting to reports page...",
     });
   };
 
